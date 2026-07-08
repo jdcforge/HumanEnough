@@ -187,9 +187,15 @@ if file_bytes is not None:
 st.header("2. Run analysis")
 
 if file_bytes is not None and word_count is not None:
-    estimated_cost = pricing.estimate_cost(word_count, provider, model)
-    if estimated_cost is not None:
-        st.caption(f"Estimated API cost: ~${estimated_cost:.2f}. Actual cost may vary.")
+    cost_estimate = pricing.estimate_cost(word_count, provider, model)
+    if cost_estimate is not None:
+        caption = (
+            f"Estimated API cost: ~${cost_estimate.low:.2f} "
+            f"(up to ~${cost_estimate.high:.2f} if a retry is needed). Actual cost may vary."
+        )
+        if not cost_estimate.is_live_pricing:
+            caption += " (using bundled pricing -- live pricing lookup unavailable)"
+        st.caption(caption)
 
 run_disabled = file_bytes is None or not api_key
 run_clicked = st.button("Analyse", disabled=run_disabled, type="primary")

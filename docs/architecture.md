@@ -428,17 +428,44 @@ HUMAN_ZONE_CENTRE: tuple          # (68, 72)
 
 ### `pricing.py`
 
-Contains API cost constants for estimating analysis cost before a run. Pricing will
-drift over time — update these constants when provider pricing changes. Note the date
-of last verification in `CHANGELOG.md` when updating.
+Contains API cost estimation logic for estimating analysis cost before a run.
 
-All values are in USD per 1,000 tokens.
+Pricing is fetched live from the LiteLLM open-source project's community-maintained price
+matrix (`LITELLM_PRICING_URL`, a JSON file updated within hours of most provider pricing
+changes), cached in-process for `CACHE_TTL_SECONDS` (6 hours) so a Streamlit rerun doesn't
+trigger a network call every time. Only the (provider, model) pairs already known via
+`FALLBACK_PRICING` are priced — this never surfaces arbitrary models from the LiteLLM
+matrix, just refreshes rates for the models this app already supports.
+
+If the live fetch fails (offline, timeout, GitHub outage) or a specific model is missing
+from the live data, cost estimation falls back to `FALLBACK_PRICING` for that model only —
+each model degrades independently. `FALLBACK_PRICING` will still drift over time; update it
+when it's too far from reality, and note the date of last verification in `CHANGELOG.md`
+when updating.
+
+All rate values are in USD per 1,000 tokens.
+
+The token estimate mirrors what `llm_scorer.py` actually sends, not just the raw manuscript
+word count:
+- Input is capped at `MAX_STORY_WORDS` (imported from `llm_scorer.py`), matching
+  `_build_prompt`'s truncation -- manuscripts longer than that never bill for more than the
+  truncated amount.
+- `PROMPT_SCAFFOLDING_WORDS` accounts for the fixed instructions/feature-questions/
+  deterministic-score lines every prompt is wrapped in, on top of the story text.
+- `llm_scorer.score()` retries once (resending the full prompt) on malformed JSON or an
+  invalid field value, roughly doubling the tokens actually billed for that run. Rather than
+  pretend that never happens, `estimate_cost()` returns a `(low, high)` range.
 
 ```python
-# Update these when provider pricing changes.
+LITELLM_PRICING_URL = "https://raw.githubusercontent.com/BerriAI/litellm/main/model_prices_and_context_window.json"
+FETCH_TIMEOUT_SECONDS = 5
+CACHE_TTL_SECONDS = 6 * 60 * 60
+
+# Used only when live pricing is unavailable for a model.
+# Update these when provider pricing changes and this drifts too far.
 # Record the update date in CHANGELOG.md.
 
-PRICING = {
+FALLBACK_PRICING = {
     "anthropic": {
         "claude-haiku-4-5-20251001": {"input": 0.0008,  "output": 0.004},
         "claude-sonnet-4-6":         {"input": 0.003,   "output": 0.015},
@@ -451,13 +478,23 @@ PRICING = {
 
 WORDS_TO_TOKENS_RATIO = 1.35      # Approximate; used for cost estimation only
 ESTIMATED_OUTPUT_TOKENS = 200     # Approximate LLM response length for 16 features
+PROMPT_SCAFFOLDING_WORDS = 400    # Fixed prompt text wrapped around the story, see above
+RETRY_COST_MULTIPLIER = 2         # llm_scorer.score() retries at most once
 
-def estimate_cost(word_count: int, provider: str, model: str) -> float | None:
-    """Return estimated cost in USD. Returns None if provider/model not found."""
+@dataclass
+class CostEstimate:
+    low: float             # Cost if the first LLM call succeeds
+    high: float             # Cost if llm_scorer.score()'s one retry fires
+    is_live_pricing: bool
+
+def estimate_cost(word_count: int, provider: str, model: str) -> CostEstimate | None:
+    """Return a CostEstimate. None if provider/model not found."""
 ```
 
-The cost estimate displayed in the UI must always be labelled as an estimate:
-"Estimated API cost: ~$X.XX. Actual cost may vary."
+The cost estimate displayed in the UI must always be labelled as an estimate, and show the
+range: "Estimated API cost: ~$X.XX (up to ~$Y.YY if a retry is needed). Actual cost may
+vary." When live pricing was unavailable and the estimate used `FALLBACK_PRICING` instead,
+the UI appends a note that bundled pricing was used.
 
 ---
 
