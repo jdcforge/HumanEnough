@@ -1,0 +1,10 @@
+This software uses narrative feature definitions and reference profile statistics
+derived from:
+
+  Russell, J., Rajendhran, R., Pham, C. M., Iyyer, M., & Wieting, J. (2026).
+  StoryScope: Investigating idiosyncrasies in AI fiction.
+  arXiv:2604.03136. University of Maryland / Google DeepMind.
+
+The StoryScope paper is used strictly for academic and research reference purposes.
+No model weights, datasets, or copyrighted story text from that work are included
+in this software.
