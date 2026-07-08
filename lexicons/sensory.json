@@ -1,0 +1,40 @@
+{
+  "olfactory": [
+    "smell", "smelled", "smelling", "scent", "reek", "reeked", "fragrance", "stench",
+    "aroma", "whiff", "odor", "odour", "perfume", "musty", "pungent", "fragrant",
+    "malodorous", "redolent", "sniff", "sniffed", "nostrils", "incense", "smoky",
+    "rancid", "fetid", "acrid", "nose", "inhale", "inhaled", "exhale", "waft", "wafted",
+    "stink", "stinking", "mildew", "must", "ammonia"
+  ],
+  "auditory": [
+    "heard", "hear", "sound", "sounds", "noise", "whisper", "whispered", "clatter",
+    "silence", "echo", "echoed", "murmur", "murmured", "rustle", "rustled", "creak",
+    "creaked", "thud", "bang", "roar", "hum", "humming", "buzz", "ring", "ringing",
+    "shriek", "scream", "screamed", "hush", "boom", "crash", "rattle", "rattled",
+    "screech", "howl", "groan", "groaned", "sigh", "sighed", "gasp", "gasped",
+    "footsteps", "voice", "voices", "listen", "listened", "listening", "ears",
+    "deafening"
+  ],
+  "tactile": [
+    "rough", "smooth", "cold", "warm", "sharp", "soft", "pressure", "texture",
+    "touch", "touched", "brittle", "hard", "firm", "damp", "wet", "dry", "sticky",
+    "slippery", "silky", "coarse", "prickly", "numb", "tingling", "ache", "aching",
+    "throb", "throbbing", "chill", "chilled", "heat", "burn", "burning", "cool",
+    "tender", "bruise", "bruised", "callused", "itch", "itchy", "clammy", "grip"
+  ],
+  "gustatory": [
+    "taste", "tasted", "bitter", "sweet", "sour", "flavour", "flavor", "swallowed",
+    "swallow", "tongue", "savoury", "savory", "salty", "sip", "sipped", "chew",
+    "chewed", "spicy", "bland", "delicious", "tasteless", "aftertaste", "mouthful",
+    "lick", "licked", "palate", "tang", "tangy", "sugary", "metallic", "stale",
+    "ripe", "juicy", "crisp", "mouth", "appetite", "hunger", "thirst"
+  ],
+  "visual": [
+    "saw", "see", "seen", "light", "shadow", "colour", "color", "glance", "glanced",
+    "dark", "darkness", "bright", "gleam", "gleamed", "glimmer", "glow", "glowed",
+    "flicker", "flickered", "silhouette", "glare", "dim", "shimmer", "sparkle",
+    "hue", "glossy", "faded", "blur", "blurred", "watched", "stared", "gaze", "gazed",
+    "glimpse", "shone", "shining", "shadowy", "luminous", "radiant", "pale", "vivid",
+    "dull", "glint"
+  ]
+}
